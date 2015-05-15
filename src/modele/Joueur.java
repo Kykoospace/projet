@@ -301,15 +301,20 @@ public class Joueur extends Element{
 		"\nExperience :" + this.exp +
 		"\nPa :" + this.pa +
 		"/20\nHP :" + this.getHp()+ "/" + this.getHpMax());
-		if (this.arme == null)
+		if (this.arme == null && this.armure!=null)
 			System.out.println(
 					"\nForce :" + this.getForce() + "( +0)" +
 					"\nResistance :"+ this.getResistance() + "( +" + armure.getDefenseBuff()+ ")" +
 					"\nAgilite :" + this.getAgilite());
 		else
-			if (this.armure == null)
+			if (this.armure == null && this.arme !=null)
 				System.out.println(
 						"\nForce :" + this.getForce() + "( +" + arme.getAttaqueBuff()+ ")" +
+						"\nResistance :"+ this.getResistance() + "( +0)" +
+						"\nAgilite :" + this.getAgilite());
+			else if (this.armure == null && this.arme ==null)
+				System.out.println(
+						"\nForce :" + this.getForce() + "( +0)" +
 						"\nResistance :"+ this.getResistance() + "( +0)" +
 						"\nAgilite :" + this.getAgilite());
 			else

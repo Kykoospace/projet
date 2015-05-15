@@ -52,6 +52,7 @@ public class ServiceItem {
 			{
 				dropItem(indiceItem);
 				this.inventaire[indiceItem-1]= i;
+				System.out.println("Vous avez ajouté "+ i + " a votre inventaire");
 			}
 			
 		}
@@ -79,6 +80,7 @@ public class ServiceItem {
 
 	public void dropItem(int i)//supprime un item de l'inventaire
 	{
+		if (i>=0 && i<=5)
 		this.inventaire[i-1]=null;
 	}
 	
@@ -110,4 +112,22 @@ public class ServiceItem {
 		addItemInventaire(ServiceJoueur.getInstance().getJoueur().getArmure());
 		ServiceJoueur.getInstance().getJoueur().setArmure(null);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
