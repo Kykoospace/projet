@@ -20,9 +20,11 @@ public class Armure extends Item{
 		
 		switch(type){
 		case ArmureDeBois : 
+			this.attaqueBuff = 0;
 			this.defenseBuff = BOIS_DEF;
 		break;
 		case ArmureDeMetal :
+			this.attaqueBuff = 10;
 			this.defenseBuff = METAL_DEF;
 			break;
 	
