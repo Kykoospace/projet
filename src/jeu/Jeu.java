@@ -15,7 +15,6 @@ import modele.Item;
 import modele.Joueur;
 import modele.Monstre;
 import modele.Obstacle;
-import modele.Tresor;
 import grille.Grille;
 
 public class Jeu {
@@ -25,21 +24,11 @@ public class Jeu {
 	private Obstacle o2;
 	private Monstre m1;
 	private Monstre m2;
-	private Tresor tresor1;
-	private Tresor tresor2;
-	private Tresor tresor3;
+	private Item item1;
+	private Item item2;
 	private Random rand = new Random();
 	private ServiceJoueur serviceJoueur = ServiceJoueur.getInstance();
 	private ServiceItem serviceItem = ServiceItem.getInstance();
-	
-	
-	
-	Armure armureDeBois = new Armure(ArmureEnum.ArmureDeBois);
-	Arme epeeDeBois = new Arme(ArmeEnum.EpeeDeBois);
-	Armure armureDeMetal = new Armure(ArmureEnum.ArmureDeMetal);
-	Arme epeeDeMetal = new Arme(ArmeEnum.EpeeDeMetal);
-	Arme excalibur = new Arme(ArmeEnum.Excalibur);
-	Arme murasame = new Arme(ArmeEnum.Murasame);
 	
 	public Jeu()
 	{
@@ -112,6 +101,12 @@ public class Jeu {
 		grille = new Grille(5,5);//crée la grille
 		
 		//crée tous les items du jeu
+		Armure armureDeBois = new Armure(ArmureEnum.ArmureDeBois);
+		Arme epeeDeBois = new Arme(ArmeEnum.EpeeDeBois);
+		Armure armureDeMetal = new Armure(ArmureEnum.ArmureDeMetal);
+		Arme epeeDeMetal = new Arme(ArmeEnum.EpeeDeMetal);
+		Arme excalibur = new Arme(ArmeEnum.Excalibur);
+		Arme murasame = new Arme(ArmeEnum.Murasame);
 		
 		
 		
@@ -177,6 +172,15 @@ public class Jeu {
 		m2 = new Monstre(ligne, colonne, "Dragon", 2000, 100, 100, 100);
 		grille.set(ligne, colonne, m2);
 		//Fin du placement du monstre2
+		//Placement des trésors
+		/*while (!grille.vide(ligne, colonne))
+		{
+			ligne = rand.nextInt(grille.getLigne());
+			colonne = rand.nextInt(grille.getColonne());
+		}
+		
+		grille.set(ligne, colonne, item1);*/
+		
 		grille.afficher();
 	}
 	
@@ -189,31 +193,25 @@ public class Jeu {
 		int y=0;
 		if (direction == 0)
 		{
-			if (e.getLigne()>0 && (grille.vide(ligne-1, colonne) || grille.getGrille()[ligne-1][colonne] instanceof Tresor))
+			if (e.getLigne()>0 && (grille.vide(ligne-1, colonne) || grille.getGrille()[ligne-1][colonne] instanceof Item))
 				x-=1;
 		}
 		else if (direction == 1)
 		{
-			if (e.getLigne()<grille.getLigne()-1 && (grille.vide(ligne+1, colonne)|| grille.getGrille()[ligne+1][colonne] instanceof Tresor))
+			if (e.getLigne()<grille.getLigne()-1 && (grille.vide(ligne+1, colonne)|| grille.getGrille()[ligne+1][colonne] instanceof Item))
 				x++;
 		}
 		else if (direction == 2)
 		{
-			if (e.getColonne()>0 && (grille.vide(ligne, colonne-1)|| grille.getGrille()[ligne][colonne-1] instanceof Tresor))
+			if (e.getColonne()>0 && (grille.vide(ligne, colonne-1)|| grille.getGrille()[ligne][colonne-1] instanceof Item))
 				y-=1;
 		}
 		else if (direction == 3)
 		{
-			if (e.getColonne()<grille.getColonne()-1 && (grille.vide(ligne, colonne+1)|| grille.getGrille()[ligne][colonne+1] instanceof Tresor))
+			if (e.getColonne()<grille.getColonne()-1 && (grille.vide(ligne, colonne+1)|| grille.getGrille()[ligne][colonne+1] instanceof Item))
 
 				y++;
 		}
-		if (grille.getGrille()[ligne+x][colonne+y] instanceof Tresor)
-		{
-			Item itemAleatoire = randomItem();
-			serviceItem.addItemInventaire(itemAleatoire);
-		}
-		
 		grille.set(ligne, colonne, null);
 		serviceJoueur.getJoueur().setLigne(ligne+x);
 		serviceJoueur.getJoueur().setColonne(colonne+y);
@@ -225,24 +223,6 @@ public class Jeu {
 	
 	
 	
-	public Item randomItem()
-	{
-		int typeItemAleatoire = rand.nextInt(2);
-		if (typeItemAleatoire == 0)
-		{
-			return this.excalibur;
-		}
-		else if (typeItemAleatoire == 1)
-		{
-			return this.armureDeBois;
-		}
-		else if (typeItemAleatoire == 2)
-		{
-			return this.murasame;
-		}
-		else 
-			return null;
-	}
 	
 	
 	
@@ -306,7 +286,7 @@ public class Jeu {
 			System.out.println("Monstre vaincu");
 			ligne = m.getLigne();
 			colonne =  m.getColonne();
-			this.tresor1 = new Tresor(ligne, colonne);
+			
 			
 			if (m==this.m1)
 			{
@@ -318,8 +298,8 @@ public class Jeu {
 				this.m2=respawnMonstre();
 				grille.set(this.m2.getLigne(), this.m2.getColonne(), m2);
 			}
-			grille.set(this.tresor1.getLigne(), this.tresor1.getColonne(), tresor1);
-			//grille.set(ligne, colonne, null);
+			
+			grille.set(ligne, colonne, null);
 			
 		}
 	}
@@ -339,7 +319,7 @@ public class Jeu {
 				}
 				
 		}
-		return new Monstre(ligne, colonne, "Pikachu", 600, 10, 500, 10);
+		return new Monstre(ligne, colonne, "Pikachu", 20, 10, 10, 10);
 	}
 	
 	public void usePA(int pa)

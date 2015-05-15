@@ -13,6 +13,9 @@ public abstract class Item extends Element{
 		super(ligne, colonne);
 	}
 	
-	
+	public String toString()
+	{
+		return "i";
+	}
 	
 }

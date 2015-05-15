@@ -233,17 +233,13 @@ public class Menu {
 					System.out.println("Mauvaise saisie");
 				
 			}while (choix<0 && choix>2);
-			if (choix ==0 && serviceJoueur.getJoueur().getArme()!=null)
+			if (choix ==0)
 			{
 				serviceItem.desequipeArme();
 			}
-			else if(choix==1 && serviceJoueur.getJoueur().getArmure()!=null)
+			else if(choix==1)
 			{
 				serviceItem.desequipeArmure();
-			}
-			else
-			{
-				System.out.println("Vous n'avez rien à desequiper");
 			}
 		}
 		else if (choix==2)//jete un item de son inventaire
