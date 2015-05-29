@@ -3,18 +3,22 @@ package jeu;
 import java.util.Random;
 import java.util.Scanner;
 
-import controle.ServiceItem;
+import controle.ServiceInventaire;
 import controle.ServiceJoueur;
 import modele.Arme;
 import modele.ArmeEnum;
+import modele.ArmeType;
 import modele.Armure;
 import modele.ArmureEnum;
+import modele.Direction;
 import modele.Element;
 import modele.Inventaire;
 import modele.Item;
 import modele.Joueur;
 import modele.Monstre;
 import modele.Obstacle;
+import modele.Potion;
+import modele.PotionDeSoin;
 import modele.Tresor;
 import grille.Grille;
 
@@ -26,13 +30,12 @@ public class Jeu {
 	private Monstre m1;
 	private Monstre m2;
 	private Tresor tresor1;
-	private Tresor tresor2;
-	private Tresor tresor3;
 	private Random rand = new Random();
+	private Joueur joueur = new Joueur();
 	private ServiceJoueur serviceJoueur = ServiceJoueur.getInstance();
-	private ServiceItem serviceItem = ServiceItem.getInstance();
+	private ServiceInventaire serviceItem = new ServiceInventaire();
 	
-	
+	//crée tous les items du jeu
 	
 	Armure armureDeBois = new Armure(ArmureEnum.ArmureDeBois);
 	Arme epeeDeBois = new Arme(ArmeEnum.EpeeDeBois);
@@ -40,11 +43,13 @@ public class Jeu {
 	Arme epeeDeMetal = new Arme(ArmeEnum.EpeeDeMetal);
 	Arme excalibur = new Arme(ArmeEnum.Excalibur);
 	Arme murasame = new Arme(ArmeEnum.Murasame);
+	Arme arcDeBois = new Arme(ArmeEnum.ArcDeBois);
+	Potion potionDeSoin = new PotionDeSoin();
 	
 	public Jeu()
 	{
 		
-		initialiseJeu();
+		//initialiseJeu();
 	}
 	
 	//getter&setter
@@ -96,37 +101,48 @@ public class Jeu {
 		this.rand = rand;
 	}
 
-	public ServiceItem getServiceItem() {
+	public ServiceInventaire getServiceItem() {
 		return serviceItem;
 	}
 
-	public void setServiceItem(ServiceItem serviceItem) {
+	public void setServiceItem(ServiceInventaire serviceItem) {
 		this.serviceItem = serviceItem;
+	}
+	
+	public Joueur getJoueur() {
+		return joueur;
+	}
+
+	public void setJoueur(Joueur joueur) {
+		this.joueur = joueur;
 	}
 	
 	//fin getter&setter
 
+	public void initialiseJoueur(String nom, String classe)
+	{
+		serviceJoueur.initialiseJoueur(joueur, nom, classe);
+	}
 	
 	public void initialiseJeu()//place et crée tout ce qu'il faut
 	{
 		grille = new Grille(5,5);//crée la grille
 		
-		//crée tous les items du jeu
-		
-		
-		
-		Inventaire sac = new Inventaire();//crée un inventaire pour le joueur
-		
 		//crée un joueur et l'initialise
-		serviceJoueur.initialiseJoueur(2,2, "Baka", 100, 100,  5, 10, 10 ,10, epeeDeBois, armureDeMetal, sac);
+		if (joueur.getClasse()=="Saber")
+			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
+		else if (joueur.getClasse()=="Archer")
+			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, arcDeBois, armureDeBois);
+		else if (joueur.getClasse()=="Caster")
+			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
 		//récupère l'inventaire du joueur pour pouvoir l'appeller de n'importe où
-		serviceItem.initialiseServiceItem(serviceJoueur.getJoueur().getInventaire().getInventaire());
+		//serviceItem.initialiseServiceItem(joueur.getInventaire().getInventaire());
 		
-		serviceItem.addItemInventaire(excalibur);
-		serviceItem.addItemInventaire(epeeDeMetal);
-		serviceItem.addItemInventaire(murasame);
-		serviceItem.addItemInventaire(armureDeMetal);
-		grille.set(2, 2, serviceJoueur.getJoueur());
+		serviceItem.addItemInventaire(excalibur, joueur);
+		serviceItem.addItemInventaire(arcDeBois, joueur);
+		serviceItem.addItemInventaire(murasame, joueur);
+		serviceItem.addItemInventaire(potionDeSoin, joueur);
+		grille.set(2, 2, joueur);
 		//debut du placement des obstacles aléatoirement pour l'instant
 		int i =0;
 		int ligne=0;
@@ -211,14 +227,20 @@ public class Jeu {
 		if (grille.getGrille()[ligne+x][colonne+y] instanceof Tresor)
 		{
 			Item itemAleatoire = randomItem();
-			serviceItem.addItemInventaire(itemAleatoire);
+			System.out.println("Le coffre contient "+ itemAleatoire);
+			serviceItem.addItemInventaire(itemAleatoire, joueur);
 		}
 		
 		grille.set(ligne, colonne, null);
-		serviceJoueur.getJoueur().setLigne(ligne+x);
-		serviceJoueur.getJoueur().setColonne(colonne+y);
-		grille.set(serviceJoueur.getJoueur().getLigne(), e.getColonne(), e);
-		usePA(1);
+		joueur.setLigne(ligne+x);
+		joueur.setColonne(colonne+y);
+		grille.set(joueur.getLigne(), e.getColonne(), e);
+		if (joueur.getColonne() != colonne || joueur.getLigne() != ligne)
+		{
+			usePA(1);
+		}
+		
+		
 	}
 	
 	
@@ -238,7 +260,7 @@ public class Jeu {
 		}
 		else if (typeItemAleatoire == 2)
 		{
-			return this.murasame;
+			return this.potionDeSoin;
 		}
 		else 
 			return null;
@@ -250,59 +272,126 @@ public class Jeu {
 	
 	
 	
-	public Element rechercheCombatPossible(int direction)
+	public Element rechercheCombatPossible(Direction direction, int indiceMain)
 	{
-		if (direction == 0)
+		int x=1;
+		if ( (indiceMain==1 && joueur.getArmeGauche()!=null && joueur.getArmeGauche().getType()==ArmeType.Epee) ||
+			 (indiceMain==1 && joueur.getArmeGauche()==null) ||
+			 (indiceMain==2 && joueur.getArmeDroite()==null) ||
+			 (indiceMain==2 && joueur.getArmeDroite()!=null && joueur.getArmeDroite().getType()==ArmeType.Epee))
 		{
-			if (serviceJoueur.getJoueur().getLigne()>0 && !grille.vide(serviceJoueur.getJoueur().getLigne()-1, serviceJoueur.getJoueur().getColonne()) && grille.getGrille()[serviceJoueur.getJoueur().getLigne()-1][serviceJoueur.getJoueur().getColonne()] instanceof Monstre)
-				return grille.getGrille()[serviceJoueur.getJoueur().getLigne()-1][serviceJoueur.getJoueur().getColonne()];
+			
+			switch (direction) {
+			case HAUT : 
+				if (joueur.getLigne()-x>=0 && !grille.vide(joueur.getLigne()-x, joueur.getColonne()) && grille.getGrille()[joueur.getLigne()-x][joueur.getColonne()] instanceof Monstre)
+					return grille.getGrille()[joueur.getLigne()-x][joueur.getColonne()];
+			break;
+			case BAS :
+				if (joueur.getLigne()+x<=grille.getLigne()-1 && !grille.vide(joueur.getLigne()+x, joueur.getColonne()) && grille.getGrille()[joueur.getLigne()+x][joueur.getColonne()] instanceof Monstre)
+					return grille.getGrille()[joueur.getLigne()+x][joueur.getColonne()];
+			break;
+			case GAUCHE :
+				if (joueur.getColonne()-x>=0 && !grille.vide(joueur.getLigne(), joueur.getColonne()-x)&& grille.getGrille()[joueur.getLigne()][joueur.getColonne()-x] instanceof Monstre)
+					return grille.getGrille()[joueur.getLigne()][joueur.getColonne()-x];
+			break;
+			case DROITE : 
+				if (joueur.getColonne()+x<=grille.getColonne()-1 &&!grille.vide(joueur.getLigne(), joueur.getColonne()+x) && grille.getGrille()[joueur.getLigne()][joueur.getColonne()+x] instanceof Monstre)
+					return grille.getGrille()[joueur.getLigne()][joueur.getColonne()+x];
+			break;
 		}
-		else if (direction == 1)
+		}
+		else if ((indiceMain==2 && joueur.getArmeGauche()==null && joueur.getArmeDroite()!=null && joueur.getArmeDroite().getType()==ArmeType.Arc) ||
+				(indiceMain==1 && joueur.getArmeGauche()!=null && joueur.getArmeDroite()==null && joueur.getArmeGauche().getType()==ArmeType.Arc))
 		{
-			if (serviceJoueur.getJoueur().getLigne()<grille.getLigne()-1 && !grille.vide(serviceJoueur.getJoueur().getLigne()+1, serviceJoueur.getJoueur().getColonne()) && grille.getGrille()[serviceJoueur.getJoueur().getLigne()+1][serviceJoueur.getJoueur().getColonne()] instanceof Monstre)
-				return grille.getGrille()[serviceJoueur.getJoueur().getLigne()+1][serviceJoueur.getJoueur().getColonne()];
+			
+			while (x<3)
+			{
+				switch (direction) {
+					case HAUT : 
+						if (joueur.getLigne()-x>=0 && !grille.vide(joueur.getLigne()-x, joueur.getColonne()) && grille.getGrille()[joueur.getLigne()-x][joueur.getColonne()] instanceof Monstre)
+							return grille.getGrille()[joueur.getLigne()-x][joueur.getColonne()];
+					break;
+					case BAS :
+						if (joueur.getLigne()+x<=grille.getLigne()-1 && !grille.vide(joueur.getLigne()+x, joueur.getColonne()) && grille.getGrille()[joueur.getLigne()+x][joueur.getColonne()] instanceof Monstre)
+							return grille.getGrille()[joueur.getLigne()+x][joueur.getColonne()];
+					break;
+					case GAUCHE :
+						if (joueur.getColonne()-x>=0 && !grille.vide(joueur.getLigne(), joueur.getColonne()-x)&& grille.getGrille()[joueur.getLigne()][joueur.getColonne()-x] instanceof Monstre)
+							return grille.getGrille()[joueur.getLigne()][joueur.getColonne()-x];
+					break;
+					case DROITE : 
+						if (joueur.getColonne()+x<=grille.getColonne()-1 &&!grille.vide(joueur.getLigne(), joueur.getColonne()+x) && grille.getGrille()[joueur.getLigne()][joueur.getColonne()+x] instanceof Monstre)
+							return grille.getGrille()[joueur.getLigne()][joueur.getColonne()+x];
+					break;
+				}
+				x++;
+			}
 		}
-		else if (direction == 2)
-		{
-			if (serviceJoueur.getJoueur().getColonne()>0 && !grille.vide(serviceJoueur.getJoueur().getLigne(), serviceJoueur.getJoueur().getColonne()-1)&& grille.getGrille()[serviceJoueur.getJoueur().getLigne()][serviceJoueur.getJoueur().getColonne()-1] instanceof Monstre)
-				return grille.getGrille()[serviceJoueur.getJoueur().getLigne()][serviceJoueur.getJoueur().getColonne()-1];
-		}
-		else if (direction == 3)
-		{
-			if (serviceJoueur.getJoueur().getColonne()<grille.getColonne()-1 &&!grille.vide(serviceJoueur.getJoueur().getLigne(), serviceJoueur.getJoueur().getColonne()+1) && grille.getGrille()[serviceJoueur.getJoueur().getLigne()][serviceJoueur.getJoueur().getColonne()+1] instanceof Monstre)
-				return grille.getGrille()[serviceJoueur.getJoueur().getLigne()][serviceJoueur.getJoueur().getColonne()+1];
-		}
-		return grille.getGrille()[serviceJoueur.getJoueur().getLigne()][serviceJoueur.getJoueur().getColonne()];
+		
+		
+		return grille.getGrille()[joueur.getLigne()][joueur.getColonne()];
 		
 	}
 	
-	public void attaquerMonstre(int direction, Monstre m)
+	public void attaquerMonstre(int direction, Monstre m, int main)
 	{
+		int bonus_ClassG = 0;
+		int bonus_ClassD = 0;
+		if (joueur.getClasse()=="Saber")
+		{
+			if (joueur.getArmeGauche()!=null && joueur.getArmeGauche().getType()==ArmeType.Epee)
+				bonus_ClassG = 100;
+			if (joueur.getArmeDroite()!=null && joueur.getArmeDroite().getType()==ArmeType.Epee)
+				bonus_ClassD = 100;
+		}
+		if (joueur.getClasse()=="Archer")
+		{
+			if (joueur.getArmeGauche()!=null && joueur.getArmeGauche().getType()==ArmeType.Arc)
+				bonus_ClassG = 100;
+			if (joueur.getArmeDroite()!=null && joueur.getArmeDroite().getType()==ArmeType.Arc)
+				bonus_ClassD = 100;
+		}
 		int ligne =0;
 		int colonne = 0;
 		int atk =1;
 		int def =1;
 		int dmg=0;
 		//formule de dommage (atk = (atkBase + atkBonus) + Rand((1/4)*atk)-def
-		if (serviceJoueur.getJoueur().getArme()==null)
+		if (main == 1)
 		{
-			atk = serviceJoueur.getJoueur().getForce();
+			if (joueur.getArmeGauche()==null)
+			{
+				atk = joueur.getForce();
+			}
+			else
+			atk = joueur.getForce()+joueur.getArmeGauche().getAttaqueBuff()+bonus_ClassG;
 		}
-		else
-		atk = serviceJoueur.getJoueur().getForce()+serviceJoueur.getJoueur().getArme().getAttaqueBuff();
+		else if (main==2)
+		{
+			if (joueur.getArmeDroite()==null)
+			{
+				atk = joueur.getForce();
+			}
+			else
+			atk = joueur.getForce()+joueur.getArmeDroite().getAttaqueBuff()+bonus_ClassD;
+		}
+		
 		def = m.getResistance()/2;
 		def = def +rand.nextInt(def);
 		atk = atk + rand.nextInt(atk/4);
 		dmg= atk-def;
+		if (dmg<=0)
+			dmg=1;
 		m.setHp(m.getHp()-dmg);
 		usePA(1);
-		serviceJoueur.getJoueur().afficheEtat();
-		System.out.println(""+serviceJoueur.getJoueur().getNom()+ " a infligé "+dmg+" dommages");
+		joueur.afficheEtat();
+		System.out.println(""+joueur.getNom()+ " a infligé "+dmg+" dommages");
 		System.out.println();
 		m.afficheEtat();
 		
 		if (m.getHp()<=0)
 		{
+			serviceJoueur.expUp(joueur, m);
 			System.out.println("Monstre vaincu");
 			ligne = m.getLigne();
 			colonne =  m.getColonne();
@@ -344,7 +433,29 @@ public class Jeu {
 	
 	public void usePA(int pa)
 	{
-		serviceJoueur.getJoueur().setPa(serviceJoueur.getJoueur().getPa()-pa);
+		joueur.setPa(joueur.getPa()-pa);
+	}
+	
+	public void tourMonstre()
+	{
+		
+		if (rechercheCombatPossible(Direction.HAUT, 0) == m1 || rechercheCombatPossible(Direction.BAS, 0) == m1 || rechercheCombatPossible(Direction.GAUCHE, 0) == m1 || rechercheCombatPossible(Direction.DROITE, 0) == m1)
+			{
+			attaquerJoueur(m1);
+		}
+			
+		if (rechercheCombatPossible(Direction.HAUT, 0) == m2 || rechercheCombatPossible(Direction.BAS, 0) == m2 || rechercheCombatPossible(Direction.GAUCHE, 0) == m2 || rechercheCombatPossible(Direction.DROITE, 0) == m2)
+		{
+			attaquerJoueur(m2);
+		}
+		
+		
+	}
+	
+	public void attaquerJoueur(Monstre m)
+	{
+		joueur.setHp(joueur.getHp() - m.getForce());
+		System.out.println("Vous avez été attaqué");
 	}
 	
 	
