@@ -1,0 +1,24 @@
+2
+2
+baka
+Archer
+1
+0
+1000
+6
+6
+400
+400
+300
+300
+16
+11
+46
+null
+Arc de Bois
+Armure de bois
+Excalibur
+Arc de Bois
+Murasame
+Potion de soin
+null

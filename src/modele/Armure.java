@@ -33,6 +33,14 @@ public class Armure extends Item{
 		}
 	}
 	
+	public ArmureEnum getType() {
+		return type;
+	}
+
+	public void setType(ArmureEnum type) {
+		this.type = type;
+	}
+
 	public Armure(int ligne, int colonne) {
 		super(ligne, colonne);
 		// TODO Auto-generated constructor stub

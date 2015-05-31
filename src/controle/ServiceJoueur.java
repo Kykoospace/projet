@@ -10,7 +10,6 @@ public class ServiceJoueur {
 	
 	private static ServiceJoueur serviceJoueur;
 	private int expTotale = 0;
-	private int pallier = 1000;
 	private ServiceJoueur(){
 		
 	}
@@ -29,13 +28,14 @@ public class ServiceJoueur {
 		joueur.setNom(nom);
 		joueur.setClasse(classe);
 		
-		if (classe == "Saber")
+		if (classe.equals("Saber") )
 		{
 			joueur.setHpMax(500);
 			joueur.setHp(500);
 			joueur.setManaMax(200);
 			joueur.setMana(200);
 			joueur.setExp(0);
+			joueur.setPallier(1000);
 			joueur.setLv(1);
 			joueur.setPa(0);
 			joueur.setPaRegen(5);
@@ -43,13 +43,14 @@ public class ServiceJoueur {
 			joueur.setResistance(20);
 			joueur.setAgilite(20);
 		}
-		else if (classe == "Archer")
+		else if (classe.equals("Archer"))
 		{
 			joueur.setHpMax(400);
 			joueur.setHp(400);
 			joueur.setManaMax(300);
 			joueur.setMana(300);
 			joueur.setExp(0);
+			joueur.setPallier(1000);
 			joueur.setLv(1);
 			joueur.setPa(0);
 			joueur.setPaRegen(6);
@@ -57,13 +58,14 @@ public class ServiceJoueur {
 			joueur.setResistance(10);
 			joueur.setAgilite(30);
 		}
-		else if (classe == "Caster")
+		else if (classe.equals("Caster"))
 		{
 			joueur.setHpMax(300);
 			joueur.setHp(300);
 			joueur.setManaMax(500);
 			joueur.setMana(500);
 			joueur.setExp(0);
+			joueur.setPallier(1000);
 			joueur.setLv(1);
 			joueur.setPa(0);
 			joueur.setPaRegen(5);
@@ -81,12 +83,32 @@ public class ServiceJoueur {
 		Inventaire sac = new Inventaire();//crée un inventaire pour le joueur
 		joueur.setInventaire(sac);
 		joueur.setArmeDroite(arme);
-		joueur.setArmeGauche(arme);
+		joueur.setArmeGauche(null);
 		joueur.setArmure(armure);
 		
 	}
 	
-	
+	public void chargementStatus(Joueur joueur, String nom, String classe, int ligne, int colonne, int lv, int exp, int pallier, int pa, int paRegen, int hp, int hpMax, int mana, int manaMax, int force, int resistance, int agilite)
+	{
+		joueur.setNom(nom);
+		joueur.setClasse(classe);
+		joueur.setLigne(ligne);
+		joueur.setColonne(colonne);
+		joueur.setHpMax(hpMax);
+		joueur.setHp(hp);
+		joueur.setManaMax(mana);
+		joueur.setMana(manaMax);
+		joueur.setExp(exp);
+		joueur.setPallier(pallier);
+		joueur.setLv(lv);
+		joueur.setPa(pa);
+		joueur.setPaRegen(paRegen);
+		joueur.setForce(force);
+		joueur.setResistance(resistance);
+		joueur.setAgilite(agilite);
+		Inventaire sac = new Inventaire();//crée un inventaire pour le joueur
+		joueur.setInventaire(sac);
+	}
 	
 	public void expUp(Joueur joueur, Monstre m)
 	{
@@ -97,10 +119,10 @@ public class ServiceJoueur {
 	public void levelUp(Joueur joueur)
 	{
 		
-		if (joueur.getExp()>pallier)
+		if (joueur.getExp()>joueur.getPallier())
 		{
-			joueur.setExp(joueur.getExp()-this.pallier);
-			this.pallier = this.pallier * 2;
+			joueur.setExp(joueur.getExp()-joueur.getPallier());
+			joueur.setPallier(joueur.getPallier()*2);
 			joueur.setLv(joueur.getLv()+1);
 		}
 	}

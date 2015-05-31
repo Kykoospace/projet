@@ -1,15 +1,18 @@
 package controle;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
 import java.util.Scanner;
 
+import jeu.Jeu;
 import modele.Arme;
-import modele.ArmeEnum;
 import modele.Armure;
-import modele.ArmureEnum;
 import modele.Direction;
 import modele.Potion;
-import jeu.*;
 
 public class Menu {
 	
@@ -28,7 +31,13 @@ public class Menu {
 		int mode= start();
 		
 		this.jeu = new Jeu();// crée un jeu
-		menuCreationPersonnage();
+		
+		if (menuChargement()==2)
+		{
+			menuCreationPersonnage();
+		}
+		else
+			chargement();
 		jeu.initialiseJeu();
 		this.serviceItem = jeu.getServiceItem();//récupère le service item crée par le jeu
 		System.out.println(this.serviceJoueur);
@@ -52,6 +61,17 @@ public class Menu {
 				System.out.println("Mode non valide");
 			}
 		}while(choix>3 && choix<0);
+		return choix;
+	}
+	
+	public int menuChargement()
+	{
+		System.out.println("Charger un personnage ? 1-oui 2-non");
+		int choix=0;
+		do
+		{
+			choix = input.nextInt();
+		}while(choix!=1 && choix !=2);
 		return choix;
 	}
 	
@@ -81,6 +101,66 @@ public class Menu {
 		attribuerPoint();
 	}
 	
+	public void chargement()
+	{
+		try {
+			String flux;
+			BufferedReader load = new BufferedReader(new FileReader("save.txt"));
+			
+			
+			flux=load.readLine();
+			int ligne = Integer.parseInt(flux);
+			flux=load.readLine();
+			int colonne = Integer.parseInt(flux);
+			String nom=load.readLine();
+			
+			String classe=load.readLine();
+			
+			flux=load.readLine();
+			int lv = Integer.parseInt(flux);
+			flux=load.readLine();
+			int exp = Integer.parseInt(flux);
+			flux=load.readLine();
+			int pallier = Integer.parseInt(flux);
+			flux=load.readLine();
+			int pa = Integer.parseInt(flux);
+			flux=load.readLine();
+			int paRegen = Integer.parseInt(flux);
+			flux=load.readLine();
+			int hp = Integer.parseInt(flux);
+			flux=load.readLine();
+			int hpMax = Integer.parseInt(flux);
+			flux=load.readLine();
+			int mana = Integer.parseInt(flux);
+			flux=load.readLine();
+			int manaMax = 	Integer.parseInt(flux);
+			flux=load.readLine();
+			int force = Integer.parseInt(flux);
+			flux=load.readLine();
+			int resistance =Integer.parseInt(flux);
+			flux=load.readLine();
+			int agilite = Integer.parseInt(flux);
+			String armeGauche = load.readLine();
+			String armeDroite = load.readLine();
+			String armure = load.readLine();
+			String item1 = load.readLine();
+			String item2 = load.readLine();
+			String item3 = load.readLine();
+			String item4 = load.readLine();
+			String item5 = load.readLine();
+			/*while ((flux = load.readLine()) != null) {
+				System.out.println(flux);
+				}*/
+			
+			
+			jeu.chargementJoueur(nom, classe, ligne, colonne, lv, exp, pallier, pa, paRegen, hp, hpMax, mana, manaMax, force, resistance, agilite, armeGauche, armeDroite, armure, item1, item2, item3, item4, item5);
+			load.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void attribuerPoint()
 	{
 		System.out.println("Vous avez 18 points à répartir entre la force, la resistance et l'agilité");
@@ -88,8 +168,7 @@ public class Menu {
 		int def =0;
 		int agi = 0;
 		String confirmation;
-		
-	
+		boolean validation = false;
 		do
 		{
 			System.out.println("Force : ");
@@ -107,36 +186,41 @@ public class Menu {
 					agi = 18-atk-def;
 					System.out.println("Agilite : "+agi);
 					System.out.println("En êtes-vous sûr? (oui/non)");
+					input.nextLine();
 					confirmation = input.nextLine();
-					/*if (confirmation.equals("oui"))
-					{*/
+					if (confirmation.equals("oui"))
+					{
 						jeu.getJoueur().setForce(jeu.getJoueur().getForce()+atk);
 						jeu.getJoueur().setResistance(jeu.getJoueur().getResistance()+def);
 						jeu.getJoueur().setAgilite(jeu.getJoueur().getAgilite()+agi);
-					//}
+						validation = true;
+					}
+					else 
+						validation=false;
 				}
 				
 			}
-		}while(atk + def + agi !=18);
+		}while(atk + def + agi !=18 || validation==false);
 	}
 	
 	public void menu()//menu qui permet de choisir ce qu'on veut faire
 	{
 		int choix=0;
+		jeu.getGrille().afficher();	//affiche la grille
 		do
 		{
 			jeu.getJoueur().setPa(jeu.getJoueur().getPa()+jeu.getJoueur().getPaRegen());//fais gagner des pa au joueur
 			do
 			{
-				System.out.println("Que voulez-vous faire ?\n1- Deplacement\n2- Attaquer\n3- Voir Inventaire\n4- Voir Etat\n5- Fin du tour");
+				System.out.println("Que voulez-vous faire ?\n1- Deplacement\n2- Attaquer\n3- Voir Inventaire\n4- Voir Etat\n5- Sauvegarde du personnage\n6 - Fin du tour");
 				do
 				{
 					choix = input.nextInt();
-					if (choix<0 && choix>5)
+					if (choix<0 && choix>7)
 					{
 						System.out.println("Mauvaise saisie");
 					}
-				}while (choix<0 && choix>5);
+				}while (choix<0 && choix>6);
 				
 				if (choix == 1)
 				{
@@ -155,10 +239,34 @@ public class Menu {
 				{
 					jeu.getJoueur().afficheEtat();//permet au joueur de voir son statut
 				}
-			}while(jeu.getJoueur().getPa()>0 && choix!=5);//tant que les pa du joueur>0 et qu'il ne décide pas de finir son tour
-			//Action des mostres
-			jeu.tourMonstre();
-			//Fin Action des monstres
+				else if(choix==5)
+				{
+					//sauvegarde
+					try {
+						PrintWriter save = new PrintWriter(new FileWriter("save.txt", false));
+						String flux;
+						flux = ""+jeu.getJoueur().getLigne()+"\n"+jeu.getJoueur().getColonne()+"\n"+jeu.getJoueur().getNom()+"\n"
+						+jeu.getJoueur().getClasse()+"\n"+jeu.getJoueur().getLv()+"\n"+jeu.getJoueur().getExp()+"\n"+
+						jeu.getJoueur().getPallier()+"\n"+jeu.getJoueur().getPa()+"\n"+jeu.getJoueur().getPaRegen()+"\n"
+						+jeu.getJoueur().getHp()+"\n"+jeu.getJoueur().getHpMax()+"\n"+
+						jeu.getJoueur().getMana()+"\n"+jeu.getJoueur().getManaMax()+"\n"+jeu.getJoueur().getForce()+"\n"+
+						jeu.getJoueur().getResistance()+"\n"+jeu.getJoueur().getAgilite()+"\n"+jeu.getJoueur().getArmeGauche()
+						+"\n"+jeu.getJoueur().getArmeDroite()+"\n"+jeu.getJoueur().getArmure()+"\n"+jeu.getJoueur().getInventaire().getInventaire()[0]
+						+"\n"+jeu.getJoueur().getInventaire().getInventaire()[1]+"\n"+jeu.getJoueur().getInventaire().getInventaire()[2]
+						+"\n"+jeu.getJoueur().getInventaire().getInventaire()[3]+"\n"+jeu.getJoueur().getInventaire().getInventaire()[4];
+						save.println(flux);
+						save.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+				//Action des mostres
+				jeu.tourMonstre();
+				System.out.println("Fin tour monstres");
+				//Fin Action des monstres
+				jeu.getGrille().afficher();	//affiche la grille
+			}while(/*jeu.getJoueur().getPa()>0 && */choix!=6);//tant qu'il ne décide pas de finir son tour
 			
 		}while (jeu.getJoueur().getHp()>0);
 		
@@ -196,7 +304,6 @@ public class Menu {
 			default:
 				break;
 		}
-			jeu.getGrille().afficher();	//affiche la grille
 	}
 	
 	public void menuAttaque()
@@ -402,7 +509,7 @@ public class Menu {
 			int indiceItem = menuDropItem();
 			serviceItem.dropItem(indiceItem, jeu.getJoueur());
 		}
-		else if (choix==4)
+		else if (choix==4)//utilise un item
 		{
 			int indiceItem=0;
 			System.out.println("Choisissez l'objet à utiliser");
@@ -444,7 +551,7 @@ public class Menu {
 		{
 			System.out.println("Choisissez l'item à abandonner");
 			System.out.println(jeu.getJoueur().getInventaire());
-			do
+			do//tape le numéro de l'emplacement de l'item
 			{
 				choix = input.nextInt();
 				if (choix<0 && choix>5)

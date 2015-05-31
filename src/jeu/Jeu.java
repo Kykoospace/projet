@@ -119,30 +119,81 @@ public class Jeu {
 	
 	//fin getter&setter
 
-	public void initialiseJoueur(String nom, String classe)
+	public void initialiseJoueur(String nom, String classe)//crée un joueur et l'initialise
 	{
 		serviceJoueur.initialiseJoueur(joueur, nom, classe);
+		if (joueur.getClasse().equals("Saber"))
+			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
+		else if (joueur.getClasse().equals("Archer"))
+			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, arcDeBois, armureDeBois);
+		else if (joueur.getClasse().equals("Caster"))
+			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
+	}
+	//crée un joueur en chargeant des données depuis un fichier
+	public void chargementJoueur(String nom, String classe, int ligne, int colonne, int lv, int exp, int pallier, int pa, int paRegen, int hp, int hpMax, int mana, int manaMax, int force, int resistance, int agilite, String armeGauche, String armeDroite, String armure, String item1, String item2, String item3, String item4, String item5)
+	{
+		serviceJoueur.chargementStatus(joueur, nom, classe, ligne, colonne, lv, exp, pallier, pa, paRegen, hp, hpMax, mana, manaMax, force, resistance, agilite);
+		joueur.setArmeGauche(stringToArme(armeGauche));
+		joueur.setArmeDroite(stringToArme(armeDroite));
+		joueur.setArmure(stringToArmure(armure));
+		
+		chargementInventaire(item1);
+		chargementInventaire(item2);
+		chargementInventaire(item3);
+		chargementInventaire(item4);
+		chargementInventaire(item5);
+	}
+	
+	public void chargementInventaire(String item)//rajoute un item
+	{
+		serviceItem.addItemInventaire(stringToArme(item), joueur);
+		serviceItem.addItemInventaire(stringToArmure(item), joueur);
+		serviceItem.addItemInventaire(stringToPotion(item), joueur);
+	}
+	
+	public Arme stringToArme(String id)//renvoie une arme à partir d'une string
+	{
+		if (id.equals("Epee de Bois"))
+			return this.epeeDeBois;
+		if (id.equals("Epee de Metal"))
+			return this.epeeDeMetal;
+		if (id.equals("Murasame"))	
+			return this.murasame;
+		if (id.equals("Excalibur"))
+			return this.excalibur;
+		if (id.equals("Arc de Bois"))
+			return this.arcDeBois;
+		return null;
+	}
+	public Armure stringToArmure(String id)//renvoie une armure depuis un string
+	{
+		if (id.equals("Armure de Bois"))
+			return this.armureDeBois;
+		if (id.equals("Armure de Metal"))	
+			return this.armureDeMetal;
+		return null;
+	}
+	
+	public Potion stringToPotion(String potion)//renvoie une potion depuis un string
+	{
+		if (potion.equals("Potion de soin"))
+			return potionDeSoin;
+		return null;
 	}
 	
 	public void initialiseJeu()//place et crée tout ce qu'il faut
 	{
 		grille = new Grille(5,5);//crée la grille
 		
-		//crée un joueur et l'initialise
-		if (joueur.getClasse()=="Saber")
-			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
-		else if (joueur.getClasse()=="Archer")
-			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, arcDeBois, armureDeBois);
-		else if (joueur.getClasse()=="Caster")
-			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
+		
 		//récupère l'inventaire du joueur pour pouvoir l'appeller de n'importe où
 		//serviceItem.initialiseServiceItem(joueur.getInventaire().getInventaire());
-		
+		/*
 		serviceItem.addItemInventaire(excalibur, joueur);
 		serviceItem.addItemInventaire(arcDeBois, joueur);
 		serviceItem.addItemInventaire(murasame, joueur);
-		serviceItem.addItemInventaire(potionDeSoin, joueur);
-		grille.set(2, 2, joueur);
+		serviceItem.addItemInventaire(potionDeSoin, joueur);*/
+		grille.set(joueur.getLigne(), joueur.getColonne(), joueur);
 		//debut du placement des obstacles aléatoirement pour l'instant
 		int i =0;
 		int ligne=0;
@@ -224,7 +275,7 @@ public class Jeu {
 
 				y++;
 		}
-		if (grille.getGrille()[ligne+x][colonne+y] instanceof Tresor)
+		if (grille.getGrille()[ligne+x][colonne+y] instanceof Tresor && e instanceof Joueur)
 		{
 			Item itemAleatoire = randomItem();
 			System.out.println("Le coffre contient "+ itemAleatoire);
@@ -232,15 +283,13 @@ public class Jeu {
 		}
 		
 		grille.set(ligne, colonne, null);
-		joueur.setLigne(ligne+x);
-		joueur.setColonne(colonne+y);
-		grille.set(joueur.getLigne(), e.getColonne(), e);
-		if (joueur.getColonne() != colonne || joueur.getLigne() != ligne)
+		e.setLigne(ligne+x);
+		e.setColonne(colonne+y);
+		grille.set(e.getLigne(), e.getColonne(), e);
+		if (joueur.getColonne() != colonne || joueur.getLigne() != ligne && e instanceof Joueur)
 		{
 			usePA(1);
 		}
-		
-		
 	}
 	
 	
@@ -438,24 +487,44 @@ public class Jeu {
 	
 	public void tourMonstre()
 	{
-		
-		if (rechercheCombatPossible(Direction.HAUT, 0) == m1 || rechercheCombatPossible(Direction.BAS, 0) == m1 || rechercheCombatPossible(Direction.GAUCHE, 0) == m1 || rechercheCombatPossible(Direction.DROITE, 0) == m1)
-			{
-			attaquerJoueur(m1);
-		}
-			
-		if (rechercheCombatPossible(Direction.HAUT, 0) == m2 || rechercheCombatPossible(Direction.BAS, 0) == m2 || rechercheCombatPossible(Direction.GAUCHE, 0) == m2 || rechercheCombatPossible(Direction.DROITE, 0) == m2)
+		boolean attaqueM1 = false;
+		boolean attaqueM2 = false;
+		for (int i=1; i<3; i++)
 		{
-			attaquerJoueur(m2);
+			if (rechercheCombatPossible(Direction.HAUT, i) == m1 || rechercheCombatPossible(Direction.BAS, i) == m1 || rechercheCombatPossible(Direction.GAUCHE, i) == m1 || rechercheCombatPossible(Direction.DROITE, i) == m1)
+			{
+				attaqueM1=true;
+			}
+			
+			if (rechercheCombatPossible(Direction.HAUT, i) == m2 || rechercheCombatPossible(Direction.BAS, i) == m2 || rechercheCombatPossible(Direction.GAUCHE, i) == m2 || rechercheCombatPossible(Direction.DROITE, i) == m2)
+			{
+				attaqueM2=true;
+			}
+			System.out.println("Fin recherche");
 		}
-		
-		
+		int direction;
+		if (attaqueM1==true)
+			attaquerJoueur(m1);
+		else
+		{
+			direction = rand.nextInt(4);
+			deplacerElement(direction, m1);
+			System.out.println(""+m1.getLigne()+""+m1.getColonne());
+		}
+		if (attaqueM2==true)
+			attaquerJoueur(m2);
+		else
+		{
+			direction = rand.nextInt(4);
+			deplacerElement(direction, m2);
+		}
+
 	}
 	
 	public void attaquerJoueur(Monstre m)
 	{
 		joueur.setHp(joueur.getHp() - m.getForce());
-		System.out.println("Vous avez été attaqué");
+		System.out.println("Vous avez été attaqué par "+m.getNom()+ " et subi "+m.getForce()+" dégâts");
 	}
 	
 	

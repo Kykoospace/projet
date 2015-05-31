@@ -6,6 +6,7 @@ import modele.Armure;
 import modele.Item;
 import modele.Joueur;
 import modele.Potion;
+import modele.PotionDeSoin;
 
 public class ServiceInventaire {
 	private static ServiceInventaire serviceItem;
@@ -27,9 +28,13 @@ public class ServiceInventaire {
 	*/
 	public void addItemInventaire(Item i, Joueur joueur)//ajouter un item à l'inventaire
 	{
-		if (setItemInventaire(i, joueur)==true)
+		if (i != null && setItemInventaire(i, joueur)==true)
 		{
 			System.out.println("Vous avez ajouté "+ i + " a votre inventaire");
+		}
+		else if (i == null)
+		{
+			
 		}
 		else
 		{
@@ -131,7 +136,8 @@ public class ServiceInventaire {
 	
 	public void utiliserPotion(Joueur joueur, Potion p, int indiceItem)
 	{
-		p.heal(joueur);
+		if (p instanceof PotionDeSoin)
+			p.heal(joueur);
 		dropItem(indiceItem, joueur);
 	}
 	

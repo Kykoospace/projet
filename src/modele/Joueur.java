@@ -12,6 +12,7 @@ public class Joueur extends Element{
 	private int mana;
 	private int manaMax;
 	private int exp;
+	private int pallier;
 	private int lv;
 	private int pa;
 	private int paRegen;
@@ -264,6 +265,15 @@ public class Joueur extends Element{
 		this.classe = classe;
 	}
 
+	public int getPallier()
+	{
+		return pallier;
+	}
+	
+	public void setPallier(int pallier)
+	{
+		this.pallier=pallier;
+	}
 
 	public Arme getArmeGauche() {
 		return armeGauche;
@@ -344,7 +354,9 @@ public class Joueur extends Element{
 		"\nLv :" + this.lv +
 		"\nExperience :" + this.exp +
 		"\nPa :" + this.pa +
-		"/20\nHP :" + this.getHp()+ "/" + this.getHpMax());
+		"/20\nHP :" + this.getHp()+ "/" + this.getHpMax()+
+		"\nMana :" + this.getMana() + "/" + this.getManaMax());
+		
 		if (this.armure!=null)
 		{
 			if (this.armeGauche !=null && this.armeDroite == null)
