@@ -1,8 +1,8 @@
 package modele;
 
-public abstract class Potion extends Item{
+public interface Potion extends Item{
 
 	
 	
-	public void heal(Joueur joueur){}
+	public void heal(Joueur joueur);
 }

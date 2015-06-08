@@ -2,9 +2,10 @@ package modele;
 
 
 
-public class Armure extends Item{
+public interface Armure extends Item{
 
-	public static final int BOIS_DEF = 100;
+	int getDefenseBuff();
+	/*public static final int BOIS_DEF = 100;
 	public static final int METAL_DEF = 200;
 	
 
@@ -96,5 +97,5 @@ public class Armure extends Item{
 		}
 		return retour;
 	}
-	
+	*/
 }

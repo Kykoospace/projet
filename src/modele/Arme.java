@@ -4,22 +4,18 @@ import controle.ServiceJoueur;
 
 
 
-public class Arme extends Item{
-	
-	public static final int BONUS_CLASS = 100;
+public interface Arme extends Item{
+	int getAttaqueBuff();
+	ArmeType getType();
+	/*public static final int BONUS_CLASS = 100;
 	
 	public static final int BOIS_ATK = 100;
 	public static final int METAL_ATK = 200;
 	public static final int EXCALIBUR_ATK = 500;
 	public static final int MURASAME_ATK = 500;
-	public static final int ARC_BOIS_ATK = 100;
+	public static final int ARC_BOIS_ATK = 100;*/
 	
-	
-	private int attaqueBuff;
-	private int defenseBuff;
-	private int agiliteBuff;
-	
-	private ArmeType type;
+	/*private ArmeType type;
 	private ArmeEnum id;
 	private ServiceJoueur serviceJoueur = ServiceJoueur.getInstance();
 	
@@ -49,36 +45,6 @@ public class Arme extends Item{
 		}
 		// TODO Auto-generated constructor stub
 	}
-	
-	public Arme(int ligne, int colonne) {
-		super(ligne, colonne);
-		// TODO Auto-generated constructor stub
-	}
-
-	public int getAttaqueBuff() {
-		return attaqueBuff;
-	}
-
-	public void setAttaqueBuff(int attaqueBuff) {
-		this.attaqueBuff = attaqueBuff;
-	}
-
-	public int getDefenseBuff() {
-		return defenseBuff;
-	}
-
-	public void setDefenseBuff(int defenseBuff) {
-		this.defenseBuff = defenseBuff;
-	}
-
-	public int getAgiliteBuff() {
-		return agiliteBuff;
-	}
-
-	public void setAgiliteBuff(int agiliteBuff) {
-		this.agiliteBuff = agiliteBuff;
-	}
-	
 	
 	
 	public ArmeType getType() {
@@ -120,5 +86,5 @@ public class Arme extends Item{
 		return retour;
 	}
 	
-
+*/
 }

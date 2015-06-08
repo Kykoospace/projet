@@ -82,11 +82,11 @@ public class ServiceInventaire {
 		joueur.setArmeGauche(arme);//met à jour son arme
 		joueur.getInventaire().getInventaire()[indiceItem-1]=null;//vide la place de l'arme equiper
 		addItemInventaire(tmp, joueur);//rajoute l'arme qui était équipé dans l'inventaire
-		if (arme.getType()==ArmeType.Arc && joueur.getArmeGauche()!= null)
+		if (arme.getType()==ArmeType.Arc && joueur.getArmeDroite()!= null)
 		{
 			desequipeArmeDroite(joueur);
 		}
-		else if (arme.getType()==ArmeType.Epee && joueur.getArmeGauche().getType()==ArmeType.Epee)
+		else if (arme.getType()==ArmeType.Epee && joueur.getArmeDroite().getType()==ArmeType.Arc)
 		{
 			desequipeArmeDroite(joueur);
 		}
@@ -102,7 +102,7 @@ public class ServiceInventaire {
 		{
 			desequipeArmeGauche(joueur);
 		}
-		else if (arme.getType()==ArmeType.Epee && joueur.getArmeGauche().getType()==ArmeType.Epee)
+		else if (arme.getType()==ArmeType.Epee && joueur.getArmeGauche().getType()==ArmeType.Arc)
 		{
 			desequipeArmeGauche(joueur);
 		}

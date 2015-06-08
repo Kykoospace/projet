@@ -1,26 +1,32 @@
 package jeu;
 
-import java.util.Random;
-import java.util.Scanner;
+import grille.Grille;
 
-import controle.ServiceInventaire;
-import controle.ServiceJoueur;
+import java.util.Random;
+
+import modele.ArcDeBois;
 import modele.Arme;
-import modele.ArmeEnum;
 import modele.ArmeType;
 import modele.Armure;
+import modele.ArmureDeBois;
+import modele.ArmureDeMetal;
 import modele.ArmureEnum;
+import modele.Bouclier;
 import modele.Direction;
 import modele.Element;
-import modele.Inventaire;
+import modele.EpeeDeBois;
+import modele.EpeeDeMetal;
+import modele.Excalibur;
 import modele.Item;
 import modele.Joueur;
 import modele.Monstre;
+import modele.Murasame;
 import modele.Obstacle;
 import modele.Potion;
 import modele.PotionDeSoin;
 import modele.Tresor;
-import grille.Grille;
+import controle.ServiceInventaire;
+import controle.ServiceJoueur;
 
 public class Jeu {
 
@@ -37,15 +43,15 @@ public class Jeu {
 	
 	//crée tous les items du jeu
 	
-	Armure armureDeBois = new Armure(ArmureEnum.ArmureDeBois);
-	Arme epeeDeBois = new Arme(ArmeEnum.EpeeDeBois);
-	Armure armureDeMetal = new Armure(ArmureEnum.ArmureDeMetal);
-	Arme epeeDeMetal = new Arme(ArmeEnum.EpeeDeMetal);
-	Arme excalibur = new Arme(ArmeEnum.Excalibur);
-	Arme murasame = new Arme(ArmeEnum.Murasame);
-	Arme arcDeBois = new Arme(ArmeEnum.ArcDeBois);
+	Armure armureDeBois = new ArmureDeBois();
+	Arme epeeDeBois = new EpeeDeBois();
+	Armure armureDeMetal = new ArmureDeMetal();
+	Arme epeeDeMetal = new EpeeDeMetal();
+	Arme excalibur = new Excalibur();
+	Arme murasame = new Murasame();
+	Arme arcDeBois = new ArcDeBois();
 	Potion potionDeSoin = new PotionDeSoin();
-	
+	Arme bouclier = new Bouclier();
 	public Jeu()
 	{
 		
@@ -130,9 +136,9 @@ public class Jeu {
 			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
 	}
 	//crée un joueur en chargeant des données depuis un fichier
-	public void chargementJoueur(String nom, String classe, int ligne, int colonne, int lv, int exp, int pallier, int pa, int paRegen, int hp, int hpMax, int mana, int manaMax, int force, int resistance, int agilite, String armeGauche, String armeDroite, String armure, String item1, String item2, String item3, String item4, String item5)
+	public void chargementJoueur(String nom, String classe, int ligne, int colonne, int lv, int exp, int px, int pallier, int pa, int paRegen, int hp, int hpMax, int mana, int manaMax, int force, int resistance, int agilite, String armeGauche, String armeDroite, String armure, String item1, String item2, String item3, String item4, String item5)
 	{
-		serviceJoueur.chargementStatus(joueur, nom, classe, ligne, colonne, lv, exp, pallier, pa, paRegen, hp, hpMax, mana, manaMax, force, resistance, agilite);
+		serviceJoueur.chargementStatus(joueur, nom, classe, ligne, colonne, lv, exp, px, pallier, pa, paRegen, hp, hpMax, mana, manaMax, force, resistance, agilite);
 		joueur.setArmeGauche(stringToArme(armeGauche));
 		joueur.setArmeDroite(stringToArme(armeDroite));
 		joueur.setArmure(stringToArmure(armure));
@@ -188,8 +194,8 @@ public class Jeu {
 		
 		//récupère l'inventaire du joueur pour pouvoir l'appeller de n'importe où
 		//serviceItem.initialiseServiceItem(joueur.getInventaire().getInventaire());
-		/*
-		serviceItem.addItemInventaire(excalibur, joueur);
+		
+		/*serviceItem.addItemInventaire(excalibur, joueur);
 		serviceItem.addItemInventaire(arcDeBois, joueur);
 		serviceItem.addItemInventaire(murasame, joueur);
 		serviceItem.addItemInventaire(potionDeSoin, joueur);*/
@@ -384,58 +390,26 @@ public class Jeu {
 	
 	public void attaquerMonstre(int direction, Monstre m, int main)
 	{
-		int bonus_ClassG = 0;
-		int bonus_ClassD = 0;
-		if (joueur.getClasse()=="Saber")
-		{
-			if (joueur.getArmeGauche()!=null && joueur.getArmeGauche().getType()==ArmeType.Epee)
-				bonus_ClassG = 100;
-			if (joueur.getArmeDroite()!=null && joueur.getArmeDroite().getType()==ArmeType.Epee)
-				bonus_ClassD = 100;
-		}
-		if (joueur.getClasse()=="Archer")
-		{
-			if (joueur.getArmeGauche()!=null && joueur.getArmeGauche().getType()==ArmeType.Arc)
-				bonus_ClassG = 100;
-			if (joueur.getArmeDroite()!=null && joueur.getArmeDroite().getType()==ArmeType.Arc)
-				bonus_ClassD = 100;
-		}
+		
 		int ligne =0;
 		int colonne = 0;
-		int atk =1;
+		int atk = 0;
 		int def =1;
 		int dmg=0;
-		//formule de dommage (atk = (atkBase + atkBonus) + Rand((1/4)*atk)-def
-		if (main == 1)
-		{
-			if (joueur.getArmeGauche()==null)
-			{
-				atk = joueur.getForce();
-			}
-			else
-			atk = joueur.getForce()+joueur.getArmeGauche().getAttaqueBuff()+bonus_ClassG;
-		}
-		else if (main==2)
-		{
-			if (joueur.getArmeDroite()==null)
-			{
-				atk = joueur.getForce();
-			}
-			else
-			atk = joueur.getForce()+joueur.getArmeDroite().getAttaqueBuff()+bonus_ClassD;
-		}
 		
+		atk = serviceJoueur.calculAttaque(joueur, main);
 		def = m.getResistance()/2;
 		def = def +rand.nextInt(def);
-		atk = atk + rand.nextInt(atk/4);
 		dmg= atk-def;
 		if (dmg<=0)
 			dmg=1;
 		m.setHp(m.getHp()-dmg);
 		usePA(1);
-		joueur.afficheEtat();
-		System.out.println(""+joueur.getNom()+ " a infligé "+dmg+" dommages");
+		serviceJoueur.afficheEtat(joueur);
+		//joueur.afficheEtat();
 		System.out.println();
+		System.out.println(""+joueur.getNom()+ " a infligé "+dmg+" dommages");
+		
 		m.afficheEtat();
 		
 		if (m.getHp()<=0)

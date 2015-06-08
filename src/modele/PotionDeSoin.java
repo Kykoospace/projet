@@ -2,7 +2,7 @@ package modele;
 
 import controle.ServiceJoueur;
 
-public class PotionDeSoin extends Potion{
+public class PotionDeSoin implements Potion{
 
 	public void heal(Joueur joueur)
 	{

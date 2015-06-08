@@ -121,6 +121,8 @@ public class Menu {
 			flux=load.readLine();
 			int exp = Integer.parseInt(flux);
 			flux=load.readLine();
+			int px = Integer.parseInt(flux);
+			flux=load.readLine();
 			int pallier = Integer.parseInt(flux);
 			flux=load.readLine();
 			int pa = Integer.parseInt(flux);
@@ -153,7 +155,7 @@ public class Menu {
 				}*/
 			
 			
-			jeu.chargementJoueur(nom, classe, ligne, colonne, lv, exp, pallier, pa, paRegen, hp, hpMax, mana, manaMax, force, resistance, agilite, armeGauche, armeDroite, armure, item1, item2, item3, item4, item5);
+			jeu.chargementJoueur(nom, classe, ligne, colonne, lv, exp, px, pallier, pa, paRegen, hp, hpMax, mana, manaMax, force, resistance, agilite, armeGauche, armeDroite, armure, item1, item2, item3, item4, item5);
 			load.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -237,7 +239,8 @@ public class Menu {
 				}
 				else if(choix==4)
 				{
-					jeu.getJoueur().afficheEtat();//permet au joueur de voir son statut
+					serviceJoueur.afficheEtat(jeu.getJoueur());
+					//jeu.getJoueur().afficheEtat();//permet au joueur de voir son statut
 				}
 				else if(choix==5)
 				{
@@ -246,7 +249,7 @@ public class Menu {
 						PrintWriter save = new PrintWriter(new FileWriter("save.txt", false));
 						String flux;
 						flux = ""+jeu.getJoueur().getLigne()+"\n"+jeu.getJoueur().getColonne()+"\n"+jeu.getJoueur().getNom()+"\n"
-						+jeu.getJoueur().getClasse()+"\n"+jeu.getJoueur().getLv()+"\n"+jeu.getJoueur().getExp()+"\n"+
+						+jeu.getJoueur().getClasse()+"\n"+jeu.getJoueur().getLv()+"\n"+jeu.getJoueur().getExp()+"\n"+jeu.getJoueur().getPx()+"\n"+
 						jeu.getJoueur().getPallier()+"\n"+jeu.getJoueur().getPa()+"\n"+jeu.getJoueur().getPaRegen()+"\n"
 						+jeu.getJoueur().getHp()+"\n"+jeu.getJoueur().getHpMax()+"\n"+
 						jeu.getJoueur().getMana()+"\n"+jeu.getJoueur().getManaMax()+"\n"+jeu.getJoueur().getForce()+"\n"+
@@ -564,6 +567,39 @@ public class Menu {
 			choix = -1;
 		}
 		return choix;
+	}
+	
+	
+	public void menuUsePx()
+	{
+		System.out.println("Vous disposez de "+jeu.getJoueur().getPx()+" px, combien de px voulez-vous depenser ?");
+		int choix=0;
+		int pts=0;
+		do
+		{
+			pts = input.nextInt();
+			if (pts<1 || pts>jeu.getJoueur().getPx())
+				System.out.println("Mauvaise saisie");
+			
+		}while (pts<1 || pts>jeu.getJoueur().getPx());
+		
+		System.out.println("Quelle caracteristique augmenté ? 1 - force / 2 - resistance / 3 - agilite");
+		
+		do
+		{
+			choix = input.nextInt();
+			if (choix<1 || choix>3)
+				System.out.println("Mauvaise saisie");
+			
+		}while (choix<1 || choix>3);
+		
+		if (choix==1)
+			serviceJoueur.usePx(jeu.getJoueur(), pts, 1);
+		if (choix==2)
+			serviceJoueur.usePx(jeu.getJoueur(), pts, 2);
+		if (choix==3)
+			serviceJoueur.usePx(jeu.getJoueur(), pts, 3);
+		
 	}
 	
 }

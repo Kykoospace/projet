@@ -1,5 +1,5 @@
 package modele;
 
 public enum ArmeType {
-	Epee, Arc
+	Epee, Arc, Bouclier
 }

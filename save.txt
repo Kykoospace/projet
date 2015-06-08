@@ -1,8 +1,9 @@
 2
 2
-baka
+2
 Archer
 1
+0
 0
 1000
 6
@@ -11,14 +12,14 @@ Archer
 400
 300
 300
-16
-11
-46
+17
+12
+44
 null
 Arc de Bois
-Armure de bois
-Excalibur
-Arc de Bois
-Murasame
-Potion de soin
+Armure de Bois
+null
+null
+null
+null
 null
