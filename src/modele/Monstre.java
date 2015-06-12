@@ -1,8 +1,8 @@
 package modele;
 
-import grille.Grille;
+import java.io.Serializable;
 
-public class Monstre extends Element{
+public class Monstre extends Element implements Serializable{
 	private String nom;
 	private int hp;
 	private int hpMax;

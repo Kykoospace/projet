@@ -1,8 +1,8 @@
 package modele;
 
-import grille.Grille;
+import java.io.Serializable;
 
-public class Joueur extends Element{
+public class Joueur extends Element implements Serializable{
 	private static Joueur joueur;
 	
 	private String nom;

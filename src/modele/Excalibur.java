@@ -1,6 +1,8 @@
 package modele;
 
-public class Excalibur implements Arme{
+import java.io.Serializable;
+
+public class Excalibur implements Arme, Serializable{
 
 	@Override
 	public int getAttaqueBuff() {

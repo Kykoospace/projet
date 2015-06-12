@@ -1,7 +1,9 @@
 package modele;
 
+import java.io.Serializable;
 
-public class Murasame implements Arme{
+
+public class Murasame implements Arme, Serializable{
 
 	@Override
 	public int getAttaqueBuff() {

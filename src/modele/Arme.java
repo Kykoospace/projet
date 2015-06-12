@@ -1,10 +1,10 @@
 package modele;
 
-import controle.ServiceJoueur;
+import java.io.Serializable;
 
 
 
-public interface Arme extends Item{
+public interface Arme extends Item, Serializable{
 	int getAttaqueBuff();
 	ArmeType getType();
 	/*public static final int BONUS_CLASS = 100;

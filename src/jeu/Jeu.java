@@ -10,7 +10,6 @@ import modele.ArmeType;
 import modele.Armure;
 import modele.ArmureDeBois;
 import modele.ArmureDeMetal;
-import modele.ArmureEnum;
 import modele.Bouclier;
 import modele.Direction;
 import modele.Element;
@@ -41,7 +40,7 @@ public class Jeu {
 	private ServiceJoueur serviceJoueur = ServiceJoueur.getInstance();
 	private ServiceInventaire serviceItem = new ServiceInventaire();
 	
-	//crée tous les items du jeu
+	//cree tous les items du jeu
 	
 	Armure armureDeBois = new ArmureDeBois();
 	Arme epeeDeBois = new EpeeDeBois();
@@ -52,6 +51,7 @@ public class Jeu {
 	Arme arcDeBois = new ArcDeBois();
 	Potion potionDeSoin = new PotionDeSoin();
 	Arme bouclier = new Bouclier();
+	
 	public Jeu()
 	{
 		
@@ -125,82 +125,27 @@ public class Jeu {
 	
 	//fin getter&setter
 
-	public void initialiseJoueur(String nom, String classe)//crée un joueur et l'initialise
+	public void initialiseJoueur(String nom, String classe)//cree un joueur et l'initialise
 	{
 		serviceJoueur.initialiseJoueur(joueur, nom, classe);
 		if (joueur.getClasse().equals("Saber"))
-			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
+			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, excalibur, armureDeBois);
 		else if (joueur.getClasse().equals("Archer"))
 			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, arcDeBois, armureDeBois);
-		else if (joueur.getClasse().equals("Caster"))
-			serviceJoueur.initialiseJoueurComplement(joueur, 2, 2, epeeDeBois, armureDeBois);
-	}
-	//crée un joueur en chargeant des données depuis un fichier
-	public void chargementJoueur(String nom, String classe, int ligne, int colonne, int lv, int exp, int px, int pallier, int pa, int paRegen, int hp, int hpMax, int mana, int manaMax, int force, int resistance, int agilite, String armeGauche, String armeDroite, String armure, String item1, String item2, String item3, String item4, String item5)
-	{
-		serviceJoueur.chargementStatus(joueur, nom, classe, ligne, colonne, lv, exp, px, pallier, pa, paRegen, hp, hpMax, mana, manaMax, force, resistance, agilite);
-		joueur.setArmeGauche(stringToArme(armeGauche));
-		joueur.setArmeDroite(stringToArme(armeDroite));
-		joueur.setArmure(stringToArmure(armure));
 		
-		chargementInventaire(item1);
-		chargementInventaire(item2);
-		chargementInventaire(item3);
-		chargementInventaire(item4);
-		chargementInventaire(item5);
 	}
 	
-	public void chargementInventaire(String item)//rajoute un item
+	public void initialiseJeu()//place et cree tout ce qu'il faut
 	{
-		serviceItem.addItemInventaire(stringToArme(item), joueur);
-		serviceItem.addItemInventaire(stringToArmure(item), joueur);
-		serviceItem.addItemInventaire(stringToPotion(item), joueur);
-	}
+		grille = new Grille(5,5);//cree la grille
 	
-	public Arme stringToArme(String id)//renvoie une arme à partir d'une string
-	{
-		if (id.equals("Epee de Bois"))
-			return this.epeeDeBois;
-		if (id.equals("Epee de Metal"))
-			return this.epeeDeMetal;
-		if (id.equals("Murasame"))	
-			return this.murasame;
-		if (id.equals("Excalibur"))
-			return this.excalibur;
-		if (id.equals("Arc de Bois"))
-			return this.arcDeBois;
-		return null;
-	}
-	public Armure stringToArmure(String id)//renvoie une armure depuis un string
-	{
-		if (id.equals("Armure de Bois"))
-			return this.armureDeBois;
-		if (id.equals("Armure de Metal"))	
-			return this.armureDeMetal;
-		return null;
-	}
-	
-	public Potion stringToPotion(String potion)//renvoie une potion depuis un string
-	{
-		if (potion.equals("Potion de soin"))
-			return potionDeSoin;
-		return null;
-	}
-	
-	public void initialiseJeu()//place et crée tout ce qu'il faut
-	{
-		grille = new Grille(5,5);//crée la grille
 		
-		
-		//récupère l'inventaire du joueur pour pouvoir l'appeller de n'importe où
-		//serviceItem.initialiseServiceItem(joueur.getInventaire().getInventaire());
-		
-		/*serviceItem.addItemInventaire(excalibur, joueur);
+		/*serviceItem.addItemInventaire(bouclier, joueur);
 		serviceItem.addItemInventaire(arcDeBois, joueur);
 		serviceItem.addItemInventaire(murasame, joueur);
 		serviceItem.addItemInventaire(potionDeSoin, joueur);*/
 		grille.set(joueur.getLigne(), joueur.getColonne(), joueur);
-		//debut du placement des obstacles aléatoirement pour l'instant
+		//debut du placement des obstacles aleatoirement pour l'instant
 		int i =0;
 		int ligne=0;
 		int colonne=0;
@@ -408,7 +353,7 @@ public class Jeu {
 		serviceJoueur.afficheEtat(joueur);
 		//joueur.afficheEtat();
 		System.out.println();
-		System.out.println(""+joueur.getNom()+ " a infligé "+dmg+" dommages");
+		System.out.println(""+joueur.getNom()+ " a inflige "+dmg+" dommages");
 		
 		m.afficheEtat();
 		
@@ -498,7 +443,7 @@ public class Jeu {
 	public void attaquerJoueur(Monstre m)
 	{
 		joueur.setHp(joueur.getHp() - m.getForce());
-		System.out.println("Vous avez été attaqué par "+m.getNom()+ " et subi "+m.getForce()+" dégâts");
+		System.out.println("Vous avez ete attaque par "+m.getNom()+ " et subi "+m.getForce()+" degats");
 	}
 	
 	

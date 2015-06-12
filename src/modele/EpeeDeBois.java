@@ -1,6 +1,8 @@
 package modele;
 
-public class EpeeDeBois implements Arme{
+import java.io.Serializable;
+
+public class EpeeDeBois implements Arme, Serializable{
 
 	@Override
 	public int getAttaqueBuff() {

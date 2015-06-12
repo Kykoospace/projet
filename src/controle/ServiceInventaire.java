@@ -10,7 +10,6 @@ import modele.PotionDeSoin;
 
 public class ServiceInventaire {
 	private static ServiceInventaire serviceItem;
-	//private Item[] inventaire;
 	private Menu menu;
 	
 	public ServiceInventaire()
@@ -18,19 +17,11 @@ public class ServiceInventaire {
 		menu = new Menu("");
 	}
 	
-	/*public Item[] getInventaire() {
-		return inventaire;
-	}
-
-	public void setInventaire(Item[] inventaire) {
-		this.inventaire = inventaire;
-	}
-	*/
 	public void addItemInventaire(Item i, Joueur joueur)//ajouter un item à l'inventaire
 	{
 		if (i != null && setItemInventaire(i, joueur)==true)
 		{
-			System.out.println("Vous avez ajouté "+ i + " a votre inventaire");
+			System.out.println("Vous avez ajoute "+ i + " a votre inventaire");
 		}
 		else if (i == null)
 		{
@@ -44,7 +35,7 @@ public class ServiceInventaire {
 			{
 				dropItem(indiceItem,joueur);
 				joueur.getInventaire().getInventaire()[indiceItem-1]= i;
-				System.out.println("Vous avez ajouté "+ i + " a votre inventaire");
+				System.out.println("Vous avez ajoute "+ i + " a votre inventaire");
 			}
 			
 		}
@@ -76,12 +67,12 @@ public class ServiceInventaire {
 			joueur.getInventaire().getInventaire()[i-1]=null;
 	}
 	
-	public void equipeArmeGauche(Joueur joueur, Arme arme, int indiceItem)//le joueur équipe son arme
+	public void equipeArmeGauche(Joueur joueur, Arme arme, int indiceItem)//le joueur equipe son arme
 	{
 		Arme tmp = joueur.getArmeGauche();//variable temporaire qui stock l'arme du joueur
-		joueur.setArmeGauche(arme);//met à jour son arme
+		joueur.setArmeGauche(arme);//met a jour son arme
 		joueur.getInventaire().getInventaire()[indiceItem-1]=null;//vide la place de l'arme equiper
-		addItemInventaire(tmp, joueur);//rajoute l'arme qui était équipé dans l'inventaire
+		addItemInventaire(tmp, joueur);//rajoute l'arme qui etait equipe dans l'inventaire
 		if (arme.getType()==ArmeType.Arc && joueur.getArmeDroite()!= null)
 		{
 			desequipeArmeDroite(joueur);
@@ -92,12 +83,12 @@ public class ServiceInventaire {
 		}
 	}
 	
-	public void equipeArmeDroite(Joueur joueur, Arme arme, int indiceItem)//le joueur équipe son arme
+	public void equipeArmeDroite(Joueur joueur, Arme arme, int indiceItem)//le joueur equipe son arme
 	{
 		Arme tmp = joueur.getArmeDroite();//variable temporaire qui stock l'arme du joueur	
-		joueur.setArmeDroite(arme);//met à jour son arme
+		joueur.setArmeDroite(arme);//met a jour son arme
 		joueur.getInventaire().getInventaire()[indiceItem-1]=null;//vide la place de l'arme equiper
-		addItemInventaire(tmp, joueur);//rajoute l'arme qui était équipé dans l'inventaire
+		addItemInventaire(tmp, joueur);//rajoute l'arme qui etait equipe dans l'inventaire
 		if (arme.getType()==ArmeType.Arc && joueur.getArmeGauche()!= null)
 		{
 			desequipeArmeGauche(joueur);
@@ -108,7 +99,7 @@ public class ServiceInventaire {
 		}
 	}
 	
-	public void equipeArmure(Joueur joueur, Armure armure, int indiceItem)//le joueur équipe son armure
+	public void equipeArmure(Joueur joueur, Armure armure, int indiceItem)//le joueur equipe son armure
 	{
 		Armure tmp = joueur.getArmure();
 		joueur.setArmure(armure);

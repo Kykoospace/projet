@@ -1,7 +1,9 @@
 package modele;
 
+import java.io.Serializable;
 
-public class ArmureDeBois implements Armure{
+
+public class ArmureDeBois implements Armure, Serializable{
 
 	@Override
 	public int getDefenseBuff() {

@@ -1,8 +1,9 @@
 package modele;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Inventaire {
+public class Inventaire implements Serializable{
 	private Item[] inventaire;
 
 	public Inventaire() {

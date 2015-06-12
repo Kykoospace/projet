@@ -1,6 +1,8 @@
 package modele;
 
-public class Bouclier implements Arme, Armure{
+import java.io.Serializable;
+
+public class Bouclier implements Arme, Armure, Serializable{
 
 	@Override
 	public int getDefenseBuff() {

@@ -1,6 +1,8 @@
 package modele;
 
-public interface Potion extends Item{
+import java.io.Serializable;
+
+public interface Potion extends Item, Serializable{
 
 	
 	

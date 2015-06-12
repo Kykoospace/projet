@@ -58,7 +58,7 @@ public class Grille {
 			
 	}
 	
-	public void clearScreen()//fais sauter des lignes pour avoir un affichage séparé à chaque action
+	public void clearScreen()//fais sauter des lignes pour avoir un affichage separe à chaque action
 	{
 		for (int i=0; i<5; i++)
 		{

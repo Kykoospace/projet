@@ -1,6 +1,8 @@
 package modele;
 
-public class ArcDeBois implements Arme{
+import java.io.Serializable;
+
+public class ArcDeBois implements Arme, Serializable{
 
 	@Override
 	public int getAttaqueBuff() {

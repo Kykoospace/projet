@@ -1,8 +1,8 @@
 package modele;
 
-import controle.ServiceJoueur;
+import java.io.Serializable;
 
-public class PotionDeSoin implements Potion{
+public class PotionDeSoin implements Potion, Serializable{
 
 	public void heal(Joueur joueur)
 	{

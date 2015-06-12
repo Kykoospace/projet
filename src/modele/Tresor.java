@@ -1,7 +1,9 @@
 package modele;
 
+import java.io.Serializable;
 
-public class Tresor extends Element{
+
+public class Tresor extends Element implements Serializable{
 
 	public Tresor (int ligne, int colonne)
 	{

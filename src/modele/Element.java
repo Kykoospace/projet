@@ -1,6 +1,8 @@
 package modele;
 
-public abstract class Element {
+import java.io.Serializable;
+
+public abstract class Element implements Serializable{
 	private int ligne;
 	private int colonne;
 	

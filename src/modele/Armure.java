@@ -1,8 +1,10 @@
 package modele;
 
+import java.io.Serializable;
 
 
-public interface Armure extends Item{
+
+public interface Armure extends Item, Serializable{
 
 	int getDefenseBuff();
 	/*public static final int BOIS_DEF = 100;

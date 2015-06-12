@@ -62,21 +62,6 @@ public class ServiceJoueur {
 			joueur.setResistance(10);
 			joueur.setAgilite(30);
 		}
-		else if (classe.equals("Caster"))
-		{
-			joueur.setHpMax(300);
-			joueur.setHp(300);
-			joueur.setManaMax(500);
-			joueur.setMana(500);
-			joueur.setExp(0);
-			joueur.setPallier(1000);
-			joueur.setLv(1);
-			joueur.setPa(0);
-			joueur.setPaRegen(5);
-			joueur.setForce(5);
-			joueur.setResistance(10);
-			joueur.setAgilite(15);
-		}
 		
 	}
 	
@@ -84,35 +69,12 @@ public class ServiceJoueur {
 	{
 		joueur.setLigne(ligne);
 		joueur.setColonne(colonne);
-		Inventaire sac = new Inventaire();//crée un inventaire pour le joueur
+		Inventaire sac = new Inventaire();//cree un inventaire pour le joueur
 		joueur.setInventaire(sac);
 		joueur.setArmeDroite(arme);
 		joueur.setArmeGauche(null);
 		joueur.setArmure(armure);
 		
-	}
-	
-	public void chargementStatus(Joueur joueur, String nom, String classe, int ligne, int colonne, int lv, int exp, int px, int pallier, int pa, int paRegen, int hp, int hpMax, int mana, int manaMax, int force, int resistance, int agilite)
-	{
-		joueur.setNom(nom);
-		joueur.setClasse(classe);
-		joueur.setLigne(ligne);
-		joueur.setColonne(colonne);
-		joueur.setHpMax(hpMax);
-		joueur.setHp(hp);
-		joueur.setManaMax(mana);
-		joueur.setMana(manaMax);
-		joueur.setExp(exp);
-		joueur.setPx(px);
-		joueur.setPallier(pallier);
-		joueur.setLv(lv);
-		joueur.setPa(pa);
-		joueur.setPaRegen(paRegen);
-		joueur.setForce(force);
-		joueur.setResistance(resistance);
-		joueur.setAgilite(agilite);
-		Inventaire sac = new Inventaire();//crée un inventaire pour le joueur
-		joueur.setInventaire(sac);
 	}
 	
 	public void expUp(Joueur joueur, Monstre m)
@@ -229,39 +191,42 @@ public class ServiceJoueur {
 	public int setBonusAttaqueGauche(Joueur joueur)
 	{
 		int bonus=0;
-		if (joueur.getArmeGauche()!=null)
-		{
+		try {
 			bonus = joueur.getArmeGauche().getAttaqueBuff();
 			bonus = bonus + setBonusClasse(joueur, joueur.getArmeGauche());
-		}
+		} catch (NullPointerException e) {
 			
+		}
 		return bonus;
 	}
 	
 	public int setBonusAttaqueDroite(Joueur joueur)
 	{
 		int bonus=0;
-		if (joueur.getArmeDroite()!=null)
-		{
+		try {
 			bonus = joueur.getArmeDroite().getAttaqueBuff();
 			bonus = bonus + setBonusClasse(joueur, joueur.getArmeDroite());
-		}
+		} catch (NullPointerException e) {
 			
+		}
 		return bonus;
 	}
 	
 	public int setBonusDefense(Joueur joueur)
 	{
 		int bonus=0;
-		if (joueur.getArmure()!=null)
+		try {
 			bonus = joueur.getArmure().getDefenseBuff();
-		if (joueur.getArmeGauche()!=null && joueur.getArmeGauche().getType()==ArmeType.Bouclier)
+		} catch (NullPointerException e) {
+			
+		}
+		if (joueur.getArmeGauche()!=null && joueur.getArmeGauche() instanceof Bouclier )
 		{
 			Bouclier bouclier;
 			bouclier = (Bouclier)joueur.getArmeGauche();
 			bonus = bonus + bouclier.getDefenseBuff();
 		}
-		if (joueur.getArmeDroite()!=null && joueur.getArmeDroite().getType()==ArmeType.Bouclier)
+		if (joueur.getArmeDroite()!=null && joueur.getArmeDroite() instanceof Bouclier)
 		{
 			Bouclier bouclier;
 			bouclier = (Bouclier)joueur.getArmeDroite();
