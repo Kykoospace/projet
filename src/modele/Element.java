@@ -4,6 +4,8 @@ public abstract class Element {
 	private int ligne;
 	private int colonne;
 	
+	// Coucou ceci est un message
+		
 	public Element()
 	{
 		
